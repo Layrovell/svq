@@ -11,6 +11,7 @@ const alias = {
 	svelte: path.resolve('node_modules', 'svelte'), 
 	components: path.resolve("src/components"),
 	main: path.resolve("src/main"),
+	routes: path.resolve("src/routes"),
 };
 const extensions = ['.mjs', '.js', '.json', '.svelte', '.html'];
 const mainFields = ['svelte', 'module', 'browser', 'main'];

@@ -116,7 +116,7 @@ function updateSvelteFiles() {
 			]
 		},
 		{
-			view: 'routes/blog/index',
+			view: 'routes/instructions/index',
 			vars: [{ name: 'posts', type: '{ slug: string; title: string, html: any }[]' }],
 			contextModule: [
 				{
@@ -130,7 +130,7 @@ function updateSvelteFiles() {
 			]
 		},
 		{
-			view: 'routes/blog/[slug]',
+			view: 'routes/instructions/[slug]',
 			vars: [{ name: 'post', type: '{ slug: string; title: string, html: any }' }]
 		}
 	].forEach(updateSingleSvelteFile);
