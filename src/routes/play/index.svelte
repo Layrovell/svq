@@ -6,14 +6,14 @@
   let score = 0;
   let showScore = false;
   let length = questions.length;
-  let res = [{'que': 'res'}];
+  let ans = [];
 
   const handleNext = () => {
     const next = current + 1;
     if (next < length) current = next;
     else showScore = true;
 
-    console.warn(ans);
+    // console.warn(ans);
   };
 
   const handlePrev = () => {
@@ -24,10 +24,12 @@
 
   const handleAnswerClick = (isCorrect) => {
     if (isCorrect === true) score += 1;
-    // handleNext();
   };
 
-  let ans = [];
+  const valid = () => {
+      
+  }
+
 </script>
 
 <section>
@@ -41,13 +43,10 @@
         <label>
           <input
             type="radio"
-            bind:group={ans}
+            bind:group={ans[current]}
             value={answers.answerText}
             on:click={() => {
               handleAnswerClick(answers.isCorrect);
-              res.push({'question': ans});
-              console.warn(res);
-              console.warn(ans);
             }}
           />
           {i + 1}: {answers.answerText}

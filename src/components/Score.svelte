@@ -1,9 +1,18 @@
 <script>
+  import { user } from "main/store.js";
+
   export let score;
   export let length;
 </script>
 
-<h2>Congradulations: Name!</h2>
+<h2>
+  Congradulations:
+  {#if user.username}
+    {$user.username}!
+  {:else}
+    Guest!
+  {/if}
+</h2>
 <div>
   <p>Total questions: {length}</p>
   <p>Correct answers: {score}</p>

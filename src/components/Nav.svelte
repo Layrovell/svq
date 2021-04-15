@@ -1,6 +1,21 @@
 <script>
+  import { onMount } from "svelte";
+  import axios from "axios";
   export let segment;
-  let user = { loggedIn: false, name: 'Marina' };
+  import { user } from "main/store.js";
+
+  const logout = () => {
+    axios.get("http://localhost:3003/logout").then((response) => {
+      localStorage.removeItem("username");
+      user.set('Guest');
+    });
+  };
+
+  onMount(() => {
+    axios.get("http://localhost:3003/login").then((response) => {
+      user.set(response.data[0].username);
+    });
+  });
 </script>
 
 <nav>
@@ -9,22 +24,19 @@
       <a aria-current={segment === undefined ? "page" : undefined} href=".">home</a>
     </li>
     <li>
-      <a rel="prefetch" aria-current={segment === "instructions" ? "page" : undefined} href="instructions">instructions</a>
+      <a
+        rel="prefetch"
+        aria-current={segment === "instructions" ? "page" : undefined}
+        href="instructions">instructions</a>
     </li>
   </ul>
   <ul>
-    <li>
-      {#if user.loggedIn}
-        <li><span>{user.name}</span></li>
-        <li>
-          <a href="#">logout</a>
-        </li>
-      {:else}
-        <li>
-          <a aria-current={segment === "login" ? "page" : undefined} href="./login">login</a>
-        </li>
-      {/if}
-    </li>
+    <li><span>{$user}</span></li>
+    {#if $user === 'Guest'}
+    <li><a href="./login">login</a></li>
+    {:else}
+    <li><span class="logout" on:click={logout}>logout</span></li>
+    {/if}
   </ul>
 </nav>
 
@@ -46,6 +58,9 @@
     display: block;
     clear: both;
   }
+  .logout {
+    cursor: pointer;
+  }
   li {
     display: block;
     float: left;
@@ -63,13 +78,15 @@
     display: block;
     bottom: -1px;
   }
-  a, span {
+  a {
     text-decoration: none;
     padding: 16px 8px;
     display: block;
   }
+
   span {
-    font-weight: bold;
-    font-style: italic;
+    text-decoration: none;
+    padding: 16px 8px;
+    display: block;
   }
 </style>

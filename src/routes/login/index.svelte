@@ -1,13 +1,11 @@
 <script>
   import axios from "axios";
-
   import { store } from "@sapper/app";
   import { user } from "main/store.js";
-  console.log("USER:", user);
 
   export let username = null;
   export let password = null;
-  let loginStatus = '';
+  let loginStatus = "";
 
   const handleSubmit = () => {
     axios
@@ -17,18 +15,12 @@
       })
       .then((response) => {
         if (response.data.message) {
-          console.log(response.data);
           loginStatus = response.data.message;
         } else {
-          console.log(response.data[0]);
-          loginStatus = response.data[0].username;
-          user = response.data[0].username;
-          console.warn(user);
+          user.set(response.data[0].username);
           localStorage.setItem("username", response.data[0].username);
         }
       });
-    console.log("login submit");
-    console.log("USER:", user);
   };
 </script>
 
