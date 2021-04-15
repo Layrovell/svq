@@ -1,10 +1,10 @@
 <script>
+  import { goto } from '@sapper/app';
   import axios from "axios";
-  import { store } from "@sapper/app";
   import { user } from "main/store.js";
 
-  export let username = null;
-  export let password = null;
+  export let username = "";
+  export let password = "";
   let loginStatus = "";
 
   const handleSubmit = () => {
@@ -21,6 +21,8 @@
           localStorage.setItem("username", response.data[0].username);
         }
       });
+
+    goto('./');
   };
 </script>
 

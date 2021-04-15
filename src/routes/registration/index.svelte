@@ -1,11 +1,9 @@
 <script>
+  import { goto } from '@sapper/app';
   import axios from "axios";
 
   export let nameReg = "";
   export let passReg = "";
-
-  $: console.warn("nameReg: ", nameReg);
-  $: console.warn("passReg: ", passReg);
 
   let nameErr = "";
   let passErr = "";
@@ -51,9 +49,7 @@
         console.log(response);
       });
 
-    // nameErr = "";
-    // passErr = "";
-    console.log("submit");
+    goto('./');
   };
 </script>
 
@@ -64,8 +60,7 @@
 <section>
   <h2>Registration:</h2>
   <form on:submit|preventDefault={(e) => handleSubmit(e)}>
-    <label
-      >Username:
+    <label>Username:
       <input
         bind:value={nameReg}
         placeholder="JohnDoe"
@@ -74,8 +69,7 @@
     </label>
     <div class="errors">{nameErr}</div>
 
-    <label
-      >Password:
+    <label>Password:
       <input
         bind:value={passReg}
         type="password"

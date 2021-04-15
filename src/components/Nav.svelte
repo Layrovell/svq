@@ -1,8 +1,9 @@
 <script>
   import { onMount } from "svelte";
   import axios from "axios";
-  export let segment;
   import { user } from "main/store.js";
+
+  export let segment;
 
   const logout = () => {
     axios.get("http://localhost:3003/logout").then((response) => {

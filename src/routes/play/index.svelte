@@ -12,8 +12,6 @@
     const next = current + 1;
     if (next < length) current = next;
     else showScore = true;
-
-    // console.warn(ans);
   };
 
   const handlePrev = () => {
@@ -25,11 +23,6 @@
   const handleAnswerClick = (isCorrect) => {
     if (isCorrect === true) score += 1;
   };
-
-  const valid = () => {
-      
-  }
-
 </script>
 
 <section>
@@ -40,17 +33,18 @@
     <div class="question">{questions[current].questionText}</div>
     <div class="container">
       {#each questions[current].answerOptions as answers, i}
-        <label>
+        <div class="item">
           <input
             type="radio"
             bind:group={ans[current]}
             value={answers.answerText}
+            id={i}
             on:click={() => {
               handleAnswerClick(answers.isCorrect);
             }}
           />
-          {i + 1}: {answers.answerText}
-        </label>
+          <label for={i}>{i + 1}: {answers.answerText}</label>
+        </div>
       {/each}
     </div>
     <button on:click={() => handlePrev()}>prev</button>
@@ -68,18 +62,60 @@
     font-size: 1.5em;
     margin: 10px 0;
   }
-  label {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    align-items: center;
-  }
-  input {
-    margin: 0 10px 0 0;
-    padding: 0 10px;
-    transition: all 0.4s ease-in-out;
-  }
   .container {
     margin: 20px 20px 20px 0;
+  }
+  .item {
+    display: flex;
+    margin: 10px 0;
+  }
+  [type="radio"]:checked,
+  [type="radio"]:not(:checked) {
+    position: absolute;
+    left: -9999px;
+  }
+  [type="radio"]:checked + label,
+  [type="radio"]:not(:checked) + label {
+    position: relative;
+    padding-left: 28px;
+    cursor: pointer;
+    line-height: 20px;
+    display: inline-block;
+    color: #666;
+  }
+  [type="radio"]:checked + label:before,
+  [type="radio"]:not(:checked) + label:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #ddd;
+    border-radius: 100%;
+    background: #fff;
+  }
+  [type="radio"]:checked + label:after,
+  [type="radio"]:not(:checked) + label:after {
+    content: "";
+    width: 12px;
+    height: 12px;
+    background: #7f00bc;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    border-radius: 100%;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+  }
+  [type="radio"]:not(:checked) + label:after {
+    opacity: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  }
+  [type="radio"]:checked + label:after {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
   }
 </style>
