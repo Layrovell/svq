@@ -3,9 +3,11 @@
 
   export let score;
   export let length;
+  console.log('SCORE',score);
+  console.log($user);
 </script>
 
-<h2>Congradulations: {$user}!</h2>
+<h2>Congradulations: {$user.name}!</h2>
 <div>
   <p>Total questions: {length}</p>
   <p>Correct answers: {score}</p>

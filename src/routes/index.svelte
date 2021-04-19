@@ -1,6 +1,6 @@
 <script>
-  import quizimg from "images/quiz.png";
-  import { user } from "main/store.js";
+  import quizimg from 'images/quiz.png';
+  import { user } from 'main/store.js';
 </script>
 
 <svelte:head>
@@ -15,7 +15,7 @@
 </figure>
 
 <div class="buttons">
-  {#if $user === "Guest"}
+  {#if $user.name === 'Guest'}
     <a href="./registration">registration</a>
   {/if}
   <a href="./game">game</a>

@@ -1,54 +1,98 @@
 <script>
-  import questions from "data/questions.json";
-  import Score from "components/Score.svelte";
+  import axios from 'axios';
+  import Loader from 'components/Loader.svelte';
+  import { onMount } from 'svelte';
+  import { questions } from 'main/store';
+  import Score from 'components/Score.svelte';
+  import { user } from 'main/store.js';
 
   let current = 0;
   let score = 0;
   let showScore = false;
-  let length = questions.length;
   let ans = [];
+  let loading = false;
+
+  onMount(async () => {
+    loading = true;
+    const topicId = new URLSearchParams(window.location.search).get('topic');
+    const result = await axios.get(
+      `http://localhost:3003/questions?topic=${topicId}`
+    );
+    questions.set(result.data);
+    loading = false;
+  });
 
   const handleNext = () => {
     const next = current + 1;
-    if (next < length) current = next;
+    if (next < $questions.length) current = next;
     else showScore = true;
   };
 
   const handlePrev = () => {
     const prev = current - 1;
     if (prev >= 0) current = prev;
-    else console.log("no no no!");
+    else console.log('no.');
   };
 
-  const handleAnswerClick = (isCorrect) => {
-    if (isCorrect === true) score += 1;
+  const formatDate = (date) => {
+    return (
+      date.getFullYear() +
+      '-' +
+      ('0' + (date.getMonth() + 1)).slice(-2) +
+      '-' +
+      ('0' + date.getDate()).slice(-2)
+    );
+  };
+
+  const handleAnswerClick = (isCorrect, userId, queId, ansId) => {
+    if (isCorrect) score += 1;
+
+    axios
+      .post('http://localhost:3003/results', {
+        user_id: userId,
+        question_id: queId,
+        answer_id: ansId,
+        date: formatDate(new Date()),
+      })
+      .then((response) => {
+        console.log(response);
+      });
   };
 </script>
 
 <section>
   {#if showScore}
-    <Score {score} {length} />
-  {:else}
-    <div>Question {current + 1} / {length}</div>
-    <div class="question">{questions[current].questionText}</div>
-    <div class="container">
-      {#each questions[current].answerOptions as answers, i}
-        <div class="item">
-          <input
-            type="radio"
-            bind:group={ans[current]}
-            value={answers.answerText}
-            id={i}
-            on:click={() => {
-              handleAnswerClick(answers.isCorrect);
-            }}
-          />
-          <label for={i}>{i + 1}: {answers.answerText}</label>
-        </div>
-      {/each}
-    </div>
-    <button on:click={() => handlePrev()}>prev</button>
-    <button on:click={() => handleNext()}>next </button>
+    <Score {score} length={$questions.length} />
+  {:else if $questions.length}
+    {#if loading}
+      <Loader />
+    {:else}
+      <div>Question {current + 1} / {$questions.length}</div>
+      <div class="question">{$questions[current].questionText}</div>
+      <div class="container">
+        {#each $questions[current].answerOptions as answers, i}
+          <div class="item">
+            <input
+              type="radio"
+              bind:group={ans[current]}
+              value={answers.answerText}
+              id={i}
+              on:click={() => {
+                handleAnswerClick(
+                  answers.is_correct,
+                  $user.id,
+                  $questions[current].id,
+                  answers.is_correct
+                );
+              }}
+            />
+            <label for={i}>{i + 1}: {answers.answerText}</label>
+          </div>
+        {/each}
+      </div>
+      <button on:click={() => handlePrev()}>prev</button>
+      <button on:click={() => handleNext()}>next </button>
+    {/if}
   {/if}
 </section>
 
@@ -69,13 +113,13 @@
     display: flex;
     margin: 10px 0;
   }
-  [type="radio"]:checked,
-  [type="radio"]:not(:checked) {
+  [type='radio']:checked,
+  [type='radio']:not(:checked) {
     position: absolute;
     left: -9999px;
   }
-  [type="radio"]:checked + label,
-  [type="radio"]:not(:checked) + label {
+  [type='radio']:checked + label,
+  [type='radio']:not(:checked) + label {
     position: relative;
     padding-left: 28px;
     cursor: pointer;
@@ -83,9 +127,9 @@
     display: inline-block;
     color: #666;
   }
-  [type="radio"]:checked + label:before,
-  [type="radio"]:not(:checked) + label:before {
-    content: "";
+  [type='radio']:checked + label:before,
+  [type='radio']:not(:checked) + label:before {
+    content: '';
     position: absolute;
     left: 0;
     top: 0;
@@ -95,9 +139,9 @@
     border-radius: 100%;
     background: #fff;
   }
-  [type="radio"]:checked + label:after,
-  [type="radio"]:not(:checked) + label:after {
-    content: "";
+  [type='radio']:checked + label:after,
+  [type='radio']:not(:checked) + label:after {
+    content: '';
     width: 12px;
     height: 12px;
     background: #7f00bc;
@@ -108,12 +152,12 @@
     -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
   }
-  [type="radio"]:not(:checked) + label:after {
+  [type='radio']:not(:checked) + label:after {
     opacity: 0;
     -webkit-transform: scale(0);
     transform: scale(0);
   }
-  [type="radio"]:checked + label:after {
+  [type='radio']:checked + label:after {
     opacity: 1;
     -webkit-transform: scale(1);
     transform: scale(1);

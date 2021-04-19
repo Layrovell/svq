@@ -1,22 +1,23 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, beforeUpdate, afterUpdate } from "svelte";
   import axios from "axios";
   import { user } from "main/store.js";
-
   export let segment;
+
+  onMount(() => {
+    axios.get("http://localhost:3003/login").then((response) => {
+      user.set({name: response.data.user[0].username, id: response.data.user[0].id});
+    });
+  });
 
   const logout = () => {
     axios.get("http://localhost:3003/logout").then((response) => {
       localStorage.removeItem("username");
-      user.set('Guest');
+      user.set({name: 'Guest'});
     });
   };
 
-  onMount(() => {
-    axios.get("http://localhost:3003/login").then((response) => {
-      user.set(response.data[0].username);
-    });
-  });
+  // console.log('user.name: ', $user.name);
 </script>
 
 <nav>
@@ -28,12 +29,12 @@
       <a
         rel="prefetch"
         aria-current={segment === "instructions" ? "page" : undefined}
-        href="instructions">instructions</a>
+        href="/instructions">instructions</a>
     </li>
   </ul>
   <ul>
-    <li><span>{$user}</span></li>
-    {#if $user === 'Guest'}
+    <li><span>{$user.name}</span></li>
+    {#if $user.name === 'Guest'}
     <li><a href="./login">login</a></li>
     {:else}
     <li><span class="logout" on:click={logout}>logout</span></li>

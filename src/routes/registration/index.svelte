@@ -14,7 +14,7 @@
 
   function nameHandler() {
     const v = regexpName.test(nameReg);
-
+    
     if (!nameReg.length) nameErr = "Username cant be empty!";
     else if (!v) nameErr = "Username is not valid!";
     else nameErr = "";
@@ -34,11 +34,8 @@
     nameHandler();
     passHandler();
 
-    if (!nameErr && !passErr) {
-      formMessage = "Yuppi!";
-    } else {
-      formMessage = "nope =<";
-    }
+    if (!nameErr && !passErr) formMessage = "Yuppi!";
+    else formMessage = "nope =<";
 
     axios
       .post("http://localhost:3003/register", {
