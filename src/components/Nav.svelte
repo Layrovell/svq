@@ -1,6 +1,7 @@
 <script>
-  import { onMount, beforeUpdate, afterUpdate } from "svelte";
   import axios from "axios";
+  import { onMount } from "svelte";
+  import { goto } from '@sapper/app';
   import { user } from "main/store.js";
   export let segment;
 
@@ -15,30 +16,30 @@
       localStorage.removeItem("username");
       user.set({name: 'Guest'});
     });
+    
+    goto('./');
   };
 
-  // console.log('user.name: ', $user.name);
+  const gotoProfile = () => {
+    if ($user.name !== 'Guest') goto('./profile');
+    else console.warn('no user in system');
+  }
 </script>
 
 <nav>
   <ul>
-    <li>
-      <a aria-current={segment === undefined ? "page" : undefined} href=".">home</a>
-    </li>
-    <li>
-      <a
-        rel="prefetch"
-        aria-current={segment === "instructions" ? "page" : undefined}
-        href="/instructions">instructions</a>
-    </li>
+    <li><a aria-current={segment === undefined ? "page" : undefined} href=".">home</a></li>
+    <li><a rel="prefetch" aria-current={segment === "instructions" ? "page" : undefined} href="/instructions">instructions</a></li>
   </ul>
   <ul>
-    <li><span>{$user.name}</span></li>
+    <li><span class={$user.name === 'Guest' ? '' : 'profile'} on:click={gotoProfile}>{$user.name}</span></li>
+    
     {#if $user.name === 'Guest'}
-    <li><a href="./login">login</a></li>
+      <li><a href="./login">login</a></li>
     {:else}
-    <li><span class="logout" on:click={logout}>logout</span></li>
+      <li><span class="logout" on:click={logout}>logout</span></li>
     {/if}
+
   </ul>
 </nav>
 
@@ -67,6 +68,9 @@
     display: block;
     float: left;
   }
+  .profile {
+    cursor: pointer;
+  }
   [aria-current] {
     position: relative;
     display: inline-block;
@@ -81,7 +85,6 @@
     bottom: -1px;
   }
   a {
-    text-decoration: none;
     padding: 16px 8px;
     display: block;
   }

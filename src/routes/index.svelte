@@ -18,7 +18,7 @@
   {#if $user.name === 'Guest'}
     <a href="./registration">registration</a>
   {/if}
-  <a href="./game">game</a>
+  <a href="./languages">Languages</a>
 </div>
 
 <style>

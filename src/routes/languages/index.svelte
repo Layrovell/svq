@@ -1,21 +1,27 @@
 <script>
   import axios from 'axios';
-  import { topics } from 'main/store';
-  import { user } from 'main/store.js';
+  import { topics, user, session } from 'main/store';
 </script>
 
+<svelte:head>
+  <title>Languages</title>
+</svelte:head>
+
 <h2>Languages:</h2>
+
 {#if $topics.length}
   {#each $topics as topic}
     <a
       href={`./play?topic=${topic.id}`}
-      on:click={axios
-        .post('http://localhost:3003/session', {
+      on:click={axios.post('http://localhost:3003/runtest', {
+          is_runTest: true,
           id_user: $user.id,
-          status: true,
+          topic_id: topic.id,
+          start: new Date(),
         })
         .then((response) => {
           console.log(response);
+          session.set(response.data.session);
         })}
     >
       {topic.name}
@@ -25,12 +31,11 @@
 
 <style>
   h2 {
-    padding: 30px 0;
+    padding: 20px 0;
     margin: 0;
   }
   a {
     padding: 5px 10px;
-    text-decoration: none;
     border: 1px solid lightgray;
     display: flex;
     flex-direction: column;

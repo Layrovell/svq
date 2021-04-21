@@ -1,10 +1,9 @@
 <script>
-  import axios from 'axios';
-  import Loader from 'components/Loader.svelte';
   import { onMount } from 'svelte';
-  import { questions } from 'main/store';
+  import axios from 'axios';
+  import { user, questions, session } from 'main/store.js';
+  import Loader from 'components/Loader.svelte';
   import Score from 'components/Score.svelte';
-  import { user } from 'main/store.js';
 
   let current = 0;
   let score = 0;
@@ -15,61 +14,59 @@
   onMount(async () => {
     loading = true;
     const topicId = new URLSearchParams(window.location.search).get('topic');
-    const result = await axios.get(
-      `http://localhost:3003/questions?topic=${topicId}`
-    );
+    const result = await axios.get(`http://localhost:3003/questions?topic=${topicId}`);
     questions.set(result.data);
     loading = false;
   });
+  
+  const handlePrev = () => {
+    const prev = current - 1;
+    if (prev >= 0) current = prev;
+    else console.log('no');
+  };
 
   const handleNext = () => {
     const next = current + 1;
     if (next < $questions.length) current = next;
     else showScore = true;
-  };
 
-  const handlePrev = () => {
-    const prev = current - 1;
-    if (prev >= 0) current = prev;
-    else console.log('no.');
-  };
-
-  const formatDate = (date) => {
-    return (
-      date.getFullYear() +
-      '-' +
-      ('0' + (date.getMonth() + 1)).slice(-2) +
-      '-' +
-      ('0' + date.getDate()).slice(-2)
-    );
+    if (next === $questions.length) {
+        axios.post('http://localhost:3003/endtest', { 
+          end: new Date(),
+          score: score,
+          id_runs: $session,
+        })
+        .then((response) => { console.log(response)})
+    }
   };
 
   const handleAnswerClick = (isCorrect, userId, queId, ansId) => {
     if (isCorrect) score += 1;
-
-    axios
-      .post('http://localhost:3003/results', {
+    axios.post('http://localhost:3003/results', {
         user_id: userId,
         question_id: queId,
         answer_id: ansId,
-        date: formatDate(new Date()),
       })
-      .then((response) => {
-        console.log(response);
-      });
+      .then((response) => { console.log(response) });
   };
 </script>
+
+<svelte:head>
+  <title>Quiz</title>
+</svelte:head>
 
 <section>
   {#if showScore}
     <Score {score} length={$questions.length} />
   {:else if $questions.length}
+
     {#if loading}
       <Loader />
     {:else}
       <div>Question {current + 1} / {$questions.length}</div>
       <div class="question">{$questions[current].questionText}</div>
       <div class="container">
+        
         {#each $questions[current].answerOptions as answers, i}
           <div class="item">
             <input
@@ -82,17 +79,19 @@
                   answers.is_correct,
                   $user.id,
                   $questions[current].id,
-                  answers.is_correct
+                  answers.id
                 );
               }}
             />
             <label for={i}>{i + 1}: {answers.answerText}</label>
           </div>
         {/each}
+        
       </div>
       <button on:click={() => handlePrev()}>prev</button>
       <button on:click={() => handleNext()}>next </button>
     {/if}
+
   {/if}
 </section>
 

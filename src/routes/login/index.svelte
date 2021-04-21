@@ -1,6 +1,6 @@
 <script>
-  import { goto } from '@sapper/app';
   import axios from "axios";
+  import { goto } from '@sapper/app';
   import { user } from "main/store.js";
 
   export let username = "";
@@ -8,11 +8,7 @@
   let loginStatus = "";
 
   const handleSubmit = () => {
-    axios
-      .post("http://localhost:3003/login", {
-        username,
-        password,
-      })
+    axios.post("http://localhost:3003/login", { username, password })
       .then((response) => {
         if (response.data.message) {
           loginStatus = response.data.message;

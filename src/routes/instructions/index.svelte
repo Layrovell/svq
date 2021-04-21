@@ -13,11 +13,10 @@
 </script>
 
 <svelte:head>
-  <title>instructions</title>
+  <title>Instructions</title>
 </svelte:head>
 
 <h1>Popular questions</h1>
-
 <ul>
   {#each posts as post}
     <li><a rel="prefetch" href="instructions/{post.slug}">{post.title}</a></li>

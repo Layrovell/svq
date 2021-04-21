@@ -158,35 +158,125 @@ app.get('/questions', (req, res) => {
     )
 });
 
+app.get('/results', (req, res) => {
+  const { id_user } = req.query;
+
+  console.log(req, req.body);
+
+  db.query(
+    `SELECT topics.name, run_test.start, run_test.end, run_test.score
+    FROM run_test
+    INNER JOIN topics ON run_test.topic_id = topics.id
+    WHERE run_test.id_user = ?;`,
+    [id_user],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(400);
+        res.send({ err });
+      }
+
+      console.log(err);
+      console.log(result);
+      if (result) {
+        res.status(200);
+        res.send(result);
+      }
+    }
+  )
+});
+
 app.post("/results", (req, res) => {
   const user_id = req.body.user_id;
   const question_id = req.body.question_id;
   const answer_id = req.body.answer_id;
-  const date = req.body.date;
-  console.log('from ...: ', user_id, question_id, answer_id);
 
   db.query(
-    'INSERT INTO user_questions (user_id, question_id, answer_id, date) VALUES (?,?,?,?)',
-    [user_id, question_id, answer_id, date],
+    'INSERT INTO user_result (user_id, question_id, answer_id) VALUES (?,?,?)',
+    [user_id, question_id, answer_id],
     (err, result) => {
-      console.log(err);
+      if (err) {
+        console.log(err)
+        res.send({err});
+      }
+
+      if (result) {
+        console.log('RESULT', result)
+        res.send({result: JSON.parse(JSON.stringify(result))});
+      }
     }
   );
 });
 
-app.post("/session", (req, res) => {
-  const status = req.body.status;
-  const id_user = req.body.id_user;
-  console.log('status ...: ', status);
+app.post("/runtest", (req, res) => {
+  const { is_runTest, id_user, start, topic_id } = req.body;
 
   db.query(
-    'INSERT INTO run_session (status, id_user) VALUES (?,?)',
-    [status, id_user],
+    'INSERT INTO run_test (is_runTest, id_user, start, topic_id) VALUES (?,?,?,?)',
+    [is_runTest, id_user, start, topic_id],
     (err, result) => {
-      console.log(err);
+      if (err) {
+        console.log(err)
+        res.send({err});
+      }
+
+      if (result) {
+        res.send({ session: result.insertId });
+      }
     }
   );
 });
+
+app.post("/endtest", (req, res) => {
+  const id = req.body.id_runs;
+  const end = req.body.end;
+  const score = req.body.score;
+
+  db.query(
+    `UPDATE run_test SET end=?, score=? WHERE id_runs=?`,
+    [end, score, id],
+    (err, result) => {
+      if (err) {
+        throw err;
+        res.send({err});
+      }
+
+      console.log(result);
+      if (result) {
+        res.send({ result });
+      }
+    }
+  );
+});
+
+// app.post("/endtest", (req, res) => {
+//   const is_runTest = req.body.is_runTest;
+//   const end = req.body.end;
+//   const score = req.body.score;
+//   const id_user = req.body.id_user;
+
+//   db.query(
+//     'UPDATE run_test SET is_runTest=?, end=?, score=?, WHERE user_id=?',
+//     [is_runTest, end, score, id_user],
+//     (err, result) => {
+//       console.log(err);
+//     }
+//   );
+// });
+
+
+// app.post("/score", (req, res) => {
+//   const score = req.body.score;
+//   // console.log('score ...: ', score);
+
+//   db.query(
+//     'INSERT INTO run_test (score) VALUES (?)',
+//     [score],
+//     (err, result) => {
+//       console.log(err);
+//     }
+//   );
+// });
 
 app.listen(3003, () => {
   console.log("running server");
