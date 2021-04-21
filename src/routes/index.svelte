@@ -16,7 +16,7 @@
 
 <div class="buttons">
   {#if $user.name === 'Guest'}
-    <a href="./registration">registration</a>
+    <a href="./registration">Registration</a>
   {/if}
   <a href="./languages">Languages</a>
 </div>

@@ -14,7 +14,7 @@
   const logout = () => {
     axios.get("http://localhost:3003/logout").then((response) => {
       localStorage.removeItem("username");
-      user.set({name: 'Guest'});
+      user.set({name: 'Guest', id: 0});
     });
     
     goto('./');
@@ -28,16 +28,16 @@
 
 <nav>
   <ul>
-    <li><a aria-current={segment === undefined ? "page" : undefined} href=".">home</a></li>
-    <li><a rel="prefetch" aria-current={segment === "instructions" ? "page" : undefined} href="/instructions">instructions</a></li>
+    <li><a aria-current={segment === undefined ? "page" : undefined} href=".">Home</a></li>
+    <li><a rel="prefetch" aria-current={segment === "instructions" ? "page" : undefined} href="/instructions">Instructions</a></li>
   </ul>
   <ul>
     <li><span class={$user.name === 'Guest' ? '' : 'profile'} on:click={gotoProfile}>{$user.name}</span></li>
     
     {#if $user.name === 'Guest'}
-      <li><a href="./login">login</a></li>
+      <li><a href="./login">Login</a></li>
     {:else}
-      <li><span class="logout" on:click={logout}>logout</span></li>
+      <li><span class="logout" on:click={logout}>Logout</span></li>
     {/if}
 
   </ul>

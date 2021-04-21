@@ -5,6 +5,8 @@
   import Loader from 'components/Loader.svelte';
   import Score from 'components/Score.svelte';
 
+  console.log('$questions.length', $questions.length);
+
   let current = 0;
   let score = 0;
   let showScore = false;

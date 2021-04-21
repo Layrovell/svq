@@ -1,20 +1,24 @@
 <script>
-  import axios from "axios";
+  import axios from 'axios';
   import { goto } from '@sapper/app';
-  import { user } from "main/store.js";
+  import { user } from 'main/store.js';
 
-  export let username = "";
-  export let password = "";
-  let loginStatus = "";
+  export let username = '';
+  export let password = '';
+  let loginStatus = '';
 
   const handleSubmit = () => {
-    axios.post("http://localhost:3003/login", { username, password })
+    axios
+      .post('http://localhost:3003/login', { username, password })
       .then((response) => {
         if (response.data.message) {
           loginStatus = response.data.message;
         } else {
-          user.set(response.data[0].username);
-          localStorage.setItem("username", response.data[0].username);
+          user.set({
+            name: response.data.user[0].username,
+            id: response.data.user[0].id,
+          });
+          localStorage.setItem('username', response.data[0].username);
         }
       });
 

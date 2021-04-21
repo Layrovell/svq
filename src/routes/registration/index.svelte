@@ -13,16 +13,14 @@
   const regexpPass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/;
 
   function nameHandler() {
-    const v = regexpName.test(nameReg);
-    
+  const v = regexpName.test(nameReg);
     if (!nameReg.length) nameErr = "Username cant be empty!";
     else if (!v) nameErr = "Username is not valid!";
     else nameErr = "";
   }
 
   function passHandler() {
-    const v = regexpPass.test(passReg);
-
+  const v = regexpPass.test(passReg);
     if (!passReg.length) passErr = "Password cant be empty!";
     else if (passReg.trim().length < 6)
       passErr = "Password must be at least 6 chars long!";
@@ -34,19 +32,21 @@
     nameHandler();
     passHandler();
 
-    if (!nameErr && !passErr) formMessage = "Yuppi!";
+    if (!nameErr && !passErr) {
+      formMessage = "Yuppi!";
+      setTimeout(() => {
+        goto('./');
+      }, 1500);
+    }
     else formMessage = "nope =<";
 
-    axios
-      .post("http://localhost:3003/register", {
+    axios.post("http://localhost:3003/register", {
         username: nameReg,
         password: passReg,
       })
       .then((response) => {
         console.log(response);
       });
-
-    goto('./');
   };
 </script>
 
