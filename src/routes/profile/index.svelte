@@ -1,7 +1,7 @@
 <script>
   import axios from 'axios';
-  import { onMount } from 'svelte';
   import { user, userResults } from 'main/store.js';
+  import { baseUrl } from 'data/helpers.js';
   import Loader from 'components/Loader.svelte';
   import {
     getFormatDate,
@@ -11,15 +11,12 @@
     getProgessBarValue,
   } from 'data/helpers.js';
 
-  $: console.warn('user.id: ', $user.id);
-  $: console.warn('userResults: ', $userResults);
-
   let loading = false;
 
   const fetchingData = async () => {
     loading = true;
     const response = await axios.get(
-      `http://localhost:3003/results?id_user=${$user.id}`,
+      `${baseUrl}/results?id_user=${$user.id}`,
       { id_user: $user.id }
     );
     userResults.set(response.data);

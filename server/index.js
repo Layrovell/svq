@@ -249,35 +249,6 @@ app.post("/endtest", (req, res) => {
   );
 });
 
-// app.post("/endtest", (req, res) => {
-//   const is_runTest = req.body.is_runTest;
-//   const end = req.body.end;
-//   const score = req.body.score;
-//   const id_user = req.body.id_user;
-
-//   db.query(
-//     'UPDATE run_test SET is_runTest=?, end=?, score=?, WHERE user_id=?',
-//     [is_runTest, end, score, id_user],
-//     (err, result) => {
-//       console.log(err);
-//     }
-//   );
-// });
-
-
-// app.post("/score", (req, res) => {
-//   const score = req.body.score;
-//   // console.log('score ...: ', score);
-
-//   db.query(
-//     'INSERT INTO run_test (score) VALUES (?)',
-//     [score],
-//     (err, result) => {
-//       console.log(err);
-//     }
-//   );
-// });
-
 app.listen(3003, () => {
   console.log("running server");
 });

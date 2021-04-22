@@ -1,45 +1,58 @@
 <script>
-  import axios from "axios";
-  import { onMount } from "svelte";
+  import axios from 'axios';
+  import { onMount } from 'svelte';
   import { goto } from '@sapper/app';
-  import { user } from "main/store.js";
+  import { user } from 'main/store.js';
+  import { baseUrl } from 'data/helpers.js';
   export let segment;
 
   onMount(() => {
-    axios.get("http://localhost:3003/login").then((response) => {
-      user.set({name: response.data.user[0].username, id: response.data.user[0].id});
+    axios.get(`${baseUrl}/login`).then((response) => {
+      user.set({
+        name: response.data.user[0].username,
+        id: response.data.user[0].id,
+      });
     });
   });
 
   const logout = () => {
-    axios.get("http://localhost:3003/logout").then((response) => {
-      localStorage.removeItem("username");
-      user.set({name: 'Guest', id: 0});
+    axios.get(`${baseUrl}/logout`).then((response) => {
+      localStorage.removeItem('username');
+      user.set({ name: '', id: null });
     });
-    
+
     goto('./');
   };
 
   const gotoProfile = () => {
-    if ($user.name !== 'Guest') goto('./profile');
+    if ($user.name !== '') goto('./profile');
     else console.warn('no user in system');
-  }
+  };
 </script>
 
 <nav>
   <ul>
-    <li><a aria-current={segment === undefined ? "page" : undefined} href=".">Home</a></li>
-    <li><a rel="prefetch" aria-current={segment === "instructions" ? "page" : undefined} href="/instructions">Instructions</a></li>
+    <li>
+      <a aria-current={segment === undefined ? 'page' : undefined} href=".">Home</a>
+    </li>
+    <li>
+      <a
+        rel="prefetch"
+        aria-current={segment === 'instructions' ? 'page' : undefined}
+        href="/instructions">Instructions</a
+      >
+    </li>
   </ul>
   <ul>
-    <li><span class={$user.name === 'Guest' ? '' : 'profile'} on:click={gotoProfile}>{$user.name}</span></li>
-    
-    {#if $user.name === 'Guest'}
+    <li>
+      <span class={!$user.name ? '' : 'profile'} on:click={gotoProfile}>{$user.name}</span>
+    </li>
+
+    {#if !$user.name}
       <li><a href="./login">Login</a></li>
     {:else}
       <li><span class="logout" on:click={logout}>Logout</span></li>
     {/if}
-
   </ul>
 </nav>
 
@@ -57,7 +70,7 @@
   }
   /* clearfix */
   ul::after {
-    content: "";
+    content: '';
     display: block;
     clear: both;
   }
@@ -77,7 +90,7 @@
   }
   [aria-current]::after {
     position: absolute;
-    content: "";
+    content: '';
     width: calc(100% - 1em);
     height: 2px;
     background-color: rgb(255, 62, 0);

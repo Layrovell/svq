@@ -4,6 +4,7 @@
   import { user, questions, session } from 'main/store.js';
   import Loader from 'components/Loader.svelte';
   import Score from 'components/Score.svelte';
+  import { baseUrl } from 'data/helpers.js';
 
   console.log('$questions.length', $questions.length);
 
@@ -16,7 +17,7 @@
   onMount(async () => {
     loading = true;
     const topicId = new URLSearchParams(window.location.search).get('topic');
-    const result = await axios.get(`http://localhost:3003/questions?topic=${topicId}`);
+    const result = await axios.get(`${baseUrl}/questions?topic=${topicId}`);
     questions.set(result.data);
     loading = false;
   });
@@ -33,7 +34,7 @@
     else showScore = true;
 
     if (next === $questions.length) {
-        axios.post('http://localhost:3003/endtest', { 
+        axios.post(`${baseUrl}/endtest`, { 
           end: new Date(),
           score: score,
           id_runs: $session,
@@ -44,7 +45,7 @@
 
   const handleAnswerClick = (isCorrect, userId, queId, ansId) => {
     if (isCorrect) score += 1;
-    axios.post('http://localhost:3003/results', {
+    axios.post(`${baseUrl}/results`, {
         user_id: userId,
         question_id: queId,
         answer_id: ansId,

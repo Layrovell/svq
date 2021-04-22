@@ -1,6 +1,7 @@
 <script>
   import axios from 'axios';
   import { topics, user, session } from 'main/store';
+import { baseUrl } from 'data/helpers.js';
 </script>
 
 <svelte:head>
@@ -13,7 +14,7 @@
   {#each $topics as topic}
     <a
       href={`./play?topic=${topic.id}`}
-      on:click={axios.post('http://localhost:3003/runtest', {
+      on:click={axios.post(`${baseUrl}/runtest`, {
           is_runTest: true,
           id_user: $user.id,
           topic_id: topic.id,

@@ -1,16 +1,15 @@
 <script>
   import { goto } from '@sapper/app';
   import axios from "axios";
+  import { regexpName, regexpPass, baseUrl } from 'data/helpers.js';
 
-  export let nameReg = "";
-  export let passReg = "";
-
+  let nameReg = "";
+  let passReg = "";
   let nameErr = "";
   let passErr = "";
   let formMessage = "";
 
-  const regexpName = /^[0-9a-zA-Z]+$/;
-  const regexpPass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/;
+  console.warn($baseUrl);
 
   function nameHandler() {
   const v = regexpName.test(nameReg);
@@ -40,7 +39,7 @@
     }
     else formMessage = "nope =<";
 
-    axios.post("http://localhost:3003/register", {
+    axios.post(`${baseUrl}/register`, {
         username: nameReg,
         password: passReg,
       })
